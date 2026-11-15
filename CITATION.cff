@@ -4,7 +4,8 @@ title: "sybil-attribution: simulation code for Roster or Reputation? Attributing
 type: software
 license: MIT
 repository-code: "https://github.com/saidiadegoke/sybil-attribution"
-version: "1.0.0"
+doi: "10.5281/zenodo.24244917"
+version: "1.1.0"
 date-released: "2026-11-15"
 authors:
   - family-names: Adegoke

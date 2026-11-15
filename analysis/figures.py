@@ -251,7 +251,7 @@ def fig_trust_trajectory():
     print("fig3 written")
 
 # ---------------------------------------------------------------- Figure 4
-def fig_k_curve():
+def _draw_k(ax, fs=1.0):
     """Proposition 2 as a curve. The qualitative claim holds; the k/(k+1) form
     does not. Capture under churn is FLAT in k and sits on the undefended rate,
     so a faster-converging veto buys nothing: the mechanism is bypassed, not
@@ -260,13 +260,11 @@ def fig_k_curve():
     fl = json.load(open(os.path.join(ROOT, "analysis", "k_flatness.json")))
     und = float(pd.read_csv(os.path.join(ROOT, "analysis", "t2_factorial.csv"))
                   .query("variant=='Neither'").sybCH_mean.iloc[0])
-    fig, ax = plt.subplots(figsize=(6.6, 3.7))
 
     ks = np.linspace(2.4, 20.2, 200)
     ax.plot(ks, und * ks / (ks + 1.0), color=MUTED, lw=1.3, ls=(0, (5, 3)), zorder=1)
-    ax.annotate("Proposition 2 as stated:\nundefended $\\times\\ k/(k{+}1)$\n— rejected ($p<0.001$)",
-                (3.0, und * 3 / 4), xytext=(6, -34), textcoords="offset points",
-                ha="left", fontsize=7.2, color=MUTED, style="italic", linespacing=1.35)
+    ax.text(10.6, 0.066, "Proposition 2 as stated:\nundefended $\\times\\ k/(k{+}1)$,\nrejected ($p<0.001$)",
+            ha="left", va="center", fontsize=7.2*fs, color=MUTED, style="italic", linespacing=1.35)
 
     ax.axhline(und, color=VIOLET, lw=1.1, ls=":", zorder=1)
 
@@ -278,7 +276,7 @@ def fig_k_curve():
         g = sub.groupby("k_mean")["sybCH"]
         m = np.array([ci95(g.get_group(x))[0] for x in xs])
         h = np.array([ci95(g.get_group(x))[1] for x in xs])
-        ax.errorbar(xs, m, yerr=h, color=colr, marker=mk, ms=6.5, ls="none",
+        ax.errorbar(xs, m, yerr=h, color=colr, marker=mk, ms=6.5*fs, ls="none",
                     capsize=3, mec=SURFACE, mew=1.3, elinewidth=1.3, zorder=4)
     # the measured (flat) trend through the churn arm
     ax.plot([2.4, 20.2], [fl["mean_capture"]] * 2, color=ORANGE, lw=1.6,
@@ -286,23 +284,29 @@ def fig_k_curve():
     ax.annotate("veto only under churn  $=$  undefended rate\n"
                 "slope $0.0002\\pm0.0006$ per round ($p=0.425$)",
                 (6.0, fl["mean_capture"]), xytext=(2.7, 0.028),
-                textcoords="data", ha="left", va="bottom", fontsize=7.8,
+                textcoords="data", ha="left", va="bottom", fontsize=7.8*fs,
                 color=ORANGE, fontweight="bold", linespacing=1.4,
                 arrowprops=dict(arrowstyle="-", color=ORANGE, lw=0.8,
                                 shrinkA=3, shrinkB=2))
-    ax.annotate("roster + veto — 0.000 at every $k$, every seed",
+    ax.annotate("roster + veto: 0.000 at every $k$, every seed",
                 (20.1, 0), xytext=(0, 8), textcoords="offset points",
-                ha="right", fontsize=7.8, color=BLUE, fontweight="bold")
+                ha="right", fontsize=7.8*fs, color=BLUE, fontweight="bold")
 
     ax.annotate("", xy=(4.0, 0.126), xytext=(19.0, 0.126),
                 arrowprops=dict(arrowstyle="<->", color=INK2, lw=0.9))
-    ax.text(11.5, 0.1295, "veto made 5× faster to convict — no benefit",
-            ha="center", fontsize=7.2, color=INK2, style="italic")
+    ax.text(11.5, 0.1295, "veto made 5× faster to convict: no benefit",
+            ha="center", fontsize=7.2*fs, color=INK2, style="italic")
 
-    ax.set_xlabel("measured rounds to conviction, $k$   (slower veto →)")
-    ax.set_ylabel("forged-CH share")
+    ax.set_xlabel("measured rounds to conviction, $k$   (slower veto →)", fontsize=9*fs)
+    ax.set_ylabel("forged-CH share", fontsize=9*fs)
+    ax.tick_params(labelsize=9*fs)
     ax.set_xlim(2.2, 20.6); ax.set_ylim(-0.007, 0.140)
     ax.grid(axis="y", color=GRID, lw=0.7); ax.set_axisbelow(True)
+
+
+def fig_k_curve():
+    fig, ax = plt.subplots(figsize=(6.6, 3.7))
+    _draw_k(ax)
     fig.tight_layout()
     fig.savefig(os.path.join(FIG, "fig4_k_curve.png"), bbox_inches="tight")
     plt.close(fig)
@@ -480,34 +484,56 @@ def fig_wave4():
 
 
 # ------------------------------------------------- split-paper figure variants
-def fig_p1_delay():
+def _draw_delay(ax, fs=1.0):
     """P1 standalone: capture under a veto against the re-mint delay, with the
-    duty-cycle curve the model predicts."""
+    duty-cycle curve the model predicts, with the effective delay
+    delta = 1 + d (one mechanical round plus the configured delay d)."""
     D = pd.read_csv(os.path.join(RES, "delay_20.csv"))
     ds = np.array(sorted(D.delay.unique())); k_meas, und = 7.65, 0.10095
-    fig, ax = plt.subplots(figsize=(5.9, 3.5))
-    ax.plot(ds, und * k_meas / (k_meas + ds), color=MUTED, lw=1.4, ls=(0, (5, 3)), zorder=1)
-    ax.annotate("predicted by $k/(k{+}\\delta)$", (ds[-1], und*k_meas/(k_meas+ds[-1])),
-                xytext=(-4, -15), textcoords="offset points", ha="right", fontsize=7.4,
-                color=MUTED, style="italic")
+    ax.plot(ds, und * k_meas / (k_meas + 1 + ds), color=MUTED, lw=1.4, ls=(0, (5, 3)), zorder=1)
+    ax.text(12.5, 0.041, "predicted by $k/(k{+}\\delta)$, $\\delta = 1 + d$", ha="left", fontsize=7.4*fs,
+            color=MUTED, style="italic")
     for a, colr, mk in [("veto-only", ORANGE, "^"), ("roster+veto", BLUE, "o")]:
         m = [ci95(D[(D.arm == a) & (D.delay == x)].sybCH)[0] for x in ds]
         h = [ci95(D[(D.arm == a) & (D.delay == x)].sybCH)[1] for x in ds]
-        ax.errorbar(ds, m, yerr=h, color=colr, marker=mk, ms=6.5, capsize=3, lw=1.9,
+        ax.errorbar(ds, m, yerr=h, color=colr, marker=mk, ms=6.5*fs, capsize=3, lw=1.9,
                     mec=SURFACE, mew=1.2, zorder=4)
     ax.axhline(und, color=VIOLET, lw=1.0, ls=":")
     ax.annotate("undefended rate", (ds[-1], und), xytext=(-2, 6),
-                textcoords="offset points", ha="right", fontsize=7.4, color=VIOLET)
-    ax.annotate("veto only", (17, 0.109), fontsize=8.0, color=ORANGE, fontweight="bold")
-    ax.annotate("roster + veto: 0.000 at every $\\delta$", (1, 0.007), fontsize=8.0,
+                textcoords="offset points", ha="right", fontsize=7.4*fs, color=VIOLET)
+    ax.annotate("veto only", (17, 0.109), fontsize=8.0*fs, color=ORANGE, fontweight="bold")
+    ax.annotate("roster + veto: 0.000 at every $d$", (1, 0.007), fontsize=8.0*fs,
                 color=BLUE, fontweight="bold")
-    ax.set_xlabel("re-mint delay $\\delta$ (rounds)   (slower attacker →)")
-    ax.set_ylabel("forged-CH share")
+    ax.set_xlabel("additional re-mint delay $d$ (rounds)   (slower attacker →)", fontsize=9*fs)
+    ax.set_ylabel("forged-CH share", fontsize=9*fs)
+    ax.tick_params(labelsize=9*fs)
     ax.set_ylim(-0.006, 0.135)
     ax.grid(axis="y", color=GRID, lw=0.7); ax.set_axisbelow(True)
+
+
+def fig_p1_delay():
+    """P1 standalone: capture under a veto against the re-mint delay, with the
+    duty-cycle curve the model predicts, with the effective delay
+    delta = 1 + d (one mechanical round plus the configured delay d)."""
+    fig, ax = plt.subplots(figsize=(5.9, 3.5))
+    _draw_delay(ax)
     fig.tight_layout()
     fig.savefig(os.path.join(FIG, "fig_p1_delay.png"), bbox_inches="tight")
     plt.close(fig); print("fig_p1_delay written")
+
+
+def fig_p1_kd():
+    """P1 (12-page version): the two time-constant sweeps as one two-panel figure,
+    (a) the defender's rate k and (b) the attacker's delay d, sized for the text
+    width so that annotations print at about 7 pt or more."""
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(10.4, 3.9), sharey=True)
+    _draw_k(a1, fs=1.12); _draw_delay(a2, fs=1.12)
+    a2.set_ylabel("")
+    for ax, t in ((a1, "(a) faster veto"), (a2, "(b) slower attacker")):
+        ax.set_title(t, loc="left", fontsize=10.5, fontweight="bold", color=INK)
+    fig.tight_layout(w_pad=1.5)
+    fig.savefig(os.path.join(FIG, "fig_p1_kd.png"), bbox_inches="tight")
+    plt.close(fig); print("fig_p1_kd written")
 
 
 def fig_p2_placement():
@@ -582,6 +608,6 @@ if __name__ == "__main__":
     fig_coverage_matrix()
     fig_trust_trajectory()
     for f in (fig_admission_vs_fraction, fig_k_curve, fig_cross_host, fig_wave4,
-              fig_p1_delay, fig_p2_placement):
+              fig_p1_delay, fig_p1_kd, fig_p2_placement):
         try: f()
         except Exception as e: print(f"{f.__name__} skipped: {e}")

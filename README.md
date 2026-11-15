@@ -1,5 +1,7 @@
 # Roster or Reputation? Sybil mechanism attribution in clustered WSNs
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24244917.svg)](https://doi.org/10.5281/zenodo.24244917)
+
 Simulation code, raw results and analysis scripts for the paper
 
 > **Roster or Reputation? Attributing Sybil Resistance to Mechanisms in Secure Clustered Wireless Sensor Networks: A Simulation Study**
@@ -50,6 +52,8 @@ cd ../analysis
 python3 analyze.py         # main tables  -> tables.md, key_numbers.json
 python3 analyze_hosts.py   # cross-host   -> tables_hosts.md
 python3 analyze_wave4.py   # wave 4       -> tables_wave4.md
+python3 analyze_sensitivity.py  # sensitivity -> tables_sensitivity.md
+python3 analyze_revision.py     # revision statistics (bootstrap, Wilcoxon, interaction, replication) -> tables_revision.md
 python3 figures.py         # figures      -> ../figures/
 ```
 
@@ -70,7 +74,7 @@ python3 figures.py         # figures      -> ../figures/
 ## Corrections and additions in the FEIC 2026 revision
 
 - **Sinkhole.** Earlier runs simulated the sinkhole as a relabelled blackhole: the same drop rule, with no attraction. A sinkhole node now advertises inflated self-reported election inputs (full residual energy, maximum link quality, shortest distance to the base station) during election only (`simulator/adversary/sinkhole_advertise.m`), then drops like a blackhole. `cfg.sinkholeSpoof = false` reproduces the old behaviour. `analysis/analyze.py` replaces the old sinkhole rows with the rerun in `results/shards/sinkfix/`. The test `simulator/tests/test_sinkhole.m` checks that a sinkhole out-attracts a blackhole.
-- **Adversary-model sensitivity.** Three new knobs, each off by default so every earlier result is unchanged: `cfg.newcomerT0` (trust of a re-minted identity), `cfg.sybilMintBudget` (re-mints allowed per attacker) and `cfg.sybilMintCost` (energy per re-mint). They are documented in `simulator/adversary/churn_sybil.m` and swept by `sim/attr_sensitivity.m`.
+- **Adversary-model sensitivity.** Three new knobs, each off by default so every earlier result is unchanged: `cfg.newcomerT0` (trust of a re-minted identity), `cfg.sybilMintBudget` (re-mints allowed per attacker) and `cfg.sybilMintCost` (energy per re-mint). They are documented in `simulator/adversary/churn_sybil.m` and swept by `sim/attr_sensitivity.m`; results in `analysis/tables_sensitivity.md`.
 
 ## Licence
 
@@ -78,4 +82,4 @@ MIT; see [LICENSE](LICENSE).
 
 ## Citation
 
-If you use this code, please cite the paper and this software; see [CITATION.cff](CITATION.cff). The archived release has a Zenodo DOI.
+If you use this code, please cite the paper and this software; see [CITATION.cff](CITATION.cff). The archive is on Zenodo: [10.5281/zenodo.24244917](https://doi.org/10.5281/zenodo.24244917) cites all versions and resolves to the latest; version 1.0.0 is [10.5281/zenodo.24244918](https://doi.org/10.5281/zenodo.24244918).
