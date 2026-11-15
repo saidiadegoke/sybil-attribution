@@ -1,0 +1,13 @@
+{
+  "title": "sybil-attribution: simulation code for Roster or Reputation? Attributing Sybil Resistance to Mechanisms in Secure Clustered Wireless Sensor Networks",
+  "upload_type": "software",
+  "license": "MIT",
+  "description": "MATLAB/Octave simulator, experiment drivers, raw results and Python analysis scripts for the FEIC 2026 paper 'Roster or Reputation? Attributing Sybil Resistance to Mechanisms in Secure Clustered Wireless Sensor Networks: A Simulation Study'. A 2x2 factorial ablation of a registration roster and a behavioural trust veto in secure clustered wireless sensor networks, with forged identities and compromised hardware counted separately.",
+  "creators": [
+    {"name": "Adegoke, Saidi Adetunji", "affiliation": "University of Lagos"},
+    {"name": "Abdulsalam, Khadeejah Adebisi", "affiliation": "University of Lagos"},
+    {"name": "Azeez, Nureni Ayofe", "affiliation": "University of Lagos"}
+  ],
+  "keywords": ["wireless sensor networks", "secure clustering", "Sybil attack", "trust and reputation", "Proof-of-Authority", "ablation study"],
+  "version": "1.0.0"
+}

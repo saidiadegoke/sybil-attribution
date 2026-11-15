@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it and the accompanying paper."
+title: "sybil-attribution: simulation code for Roster or Reputation? Attributing Sybil Resistance to Mechanisms in Secure Clustered Wireless Sensor Networks"
+type: software
+license: MIT
+repository-code: "https://github.com/saidiadegoke/sybil-attribution"
+version: "1.0.0"
+date-released: "2026-11-15"
+authors:
+  - family-names: Adegoke
+    given-names: Saidi Adetunji
+    affiliation: "Department of Electrical and Electronics Engineering, University of Lagos"
+  - family-names: Abdulsalam
+    given-names: Khadeejah Adebisi
+    affiliation: "Department of Electrical and Electronics Engineering, University of Lagos"
+  - family-names: Azeez
+    given-names: Nureni Ayofe
+    affiliation: "University of Lagos"
+keywords:
+  - wireless sensor networks
+  - secure clustering
+  - Sybil attack
+  - trust and reputation
+  - Proof-of-Authority
+  - ablation study
+preferred-citation:
+  type: conference-paper
+  title: "Roster or Reputation? Attributing Sybil Resistance to Mechanisms in Secure Clustered Wireless Sensor Networks: A Simulation Study"
+  authors:
+    - family-names: Adegoke
+      given-names: Saidi Adetunji
+    - family-names: Abdulsalam
+      given-names: Khadeejah Adebisi
+    - family-names: Azeez
+      given-names: Nureni Ayofe
+  conference:
+    name: "Faculty of Engineering International Conference (FEIC 2026)"
+  year: 2026
